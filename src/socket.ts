@@ -1,4 +1,3 @@
-import { io } from 'socket.io-client';
-const URL: string =  'ws://localhost:8082';
-
-export const socket = io(URL);
+const io = require("socket.io-client");
+const socket = io("http://localhost:8082");
+export default socket;

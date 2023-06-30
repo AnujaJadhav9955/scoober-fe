@@ -1,20 +1,20 @@
 import React from "react";
+import Main from "./components/main/Main";
+import { applyMiddleware, createStore } from "redux";
+import { Provider } from "react-redux";
+import thunk from "redux-thunk";
+import reducer, { initialState } from "./store/reducer";
 import "./App.css";
-import { socket } from "./socket";
+
+export const store = createStore(reducer, initialState, applyMiddleware(thunk));
 
 function App() {
-  function connect() {
-    socket.emit("login");
-    //TODO
-  }
-
   return (
-    <div className="App">
-      <input type="text" placeholder="username" />
-      <button type="submit" onClick={() => connect()}>
-        Login
-      </button>
-    </div>
+    <Provider store={store}>
+      <div className="App">
+        <Main />
+      </div>
+    </Provider>
   );
 }
 
