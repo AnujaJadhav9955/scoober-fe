@@ -1,4 +1,4 @@
-###How To Run Application 
+### How To Run Application 
 1. Clone this repo
 2. Run npm install
 3. Run npm start
@@ -9,6 +9,6 @@
 8. After login, Join the room using sidebar rooms
 
 
-###Future Scope
+### Future Scope
 1. UI look and feel can be made better
 2. More unit test cases
