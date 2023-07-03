@@ -35,6 +35,7 @@ const Header = () => {
         </Typography>
         <AccountCircleSharpIcon
           fontSize="large"
+          data-testid="login"
           sx={{ marginLeft: "auto" }}
           onClick={() => login()}
         />
@@ -43,4 +44,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default React.memo(Header);

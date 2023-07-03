@@ -21,6 +21,7 @@
     "react-scripts": "5.0.1",
     "redux": "^4.2.1",
     "redux-thunk": "^2.4.2",
+    "socket.io": "^4.7.1",
     "socket.io-client": "^2.3.0",
     "typescript": "^3.8.3",
     "web-vitals": "^2.1.4"

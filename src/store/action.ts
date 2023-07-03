@@ -18,3 +18,8 @@ async(dispatch: TypedDispatch) => {
       loggedIn:loginStatus, username:username
    })
   }
+
+  export const updateList = (val: string) => ({
+    type: "Update_List",
+    value:val,
+  })

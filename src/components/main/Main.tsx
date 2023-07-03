@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
 import Sidebar from "../sidebar/Sidebar";
@@ -10,34 +10,45 @@ import socket from "../../socket";
 
 const Main = () => {
   const open = useSelector((state: UserState) => state?.openDialog);
+  const [list, setList] = useState<any>([]);
   const [loginMessage, setLoginMessage] = useState("");
 
   const [receivedValue, setReceivedValue] = useState<any>();
   const [gameOver, setGameOver] = useState(false);
 
-  socket.on("message", (response: any) => {
-    setLoginMessage(response.message);
-  });
+  useEffect(() => {
+    socket.on("message", (response: any) => {
+      setLoginMessage(response.message);
+    });
 
-  socket.on("onReady", async () => {
-    console.log("READY");
-    setGameOver(false);
-    await socket.emit("letsPlay");
-  });
+    socket.once("onReady", async () => {
+      setGameOver(false);
+      socket.emit("letsPlay");
+    });
 
-  socket.on("randomNumber", (response: any) => {
-    setReceivedValue(response.number);
-  });
+    socket.on("randomNumber", async (response: any) => {
+      setList([...list, response.number]);
+      setReceivedValue(response.number);
+    });
 
-  socket.on("activateYourTurn", () => {
-    console.log("Activatre");
-  });
+    socket.on("activateYourTurn", () => {
+      console.log("Activatre");
+    });
 
-  socket.on("gameOver", () => {
-    setGameOver(true);
-  });
-  async function buttonClick(event: any) {
-    await socket.emit("sendNumber", {
+    socket.once("gameOver", async () => {
+      setGameOver(true);
+    });
+
+    return () => {
+      socket.off("gameOver");
+      socket.off("activateYourTurn");
+      socket.emit("disconnect");
+      socket.off("onReady");
+      socket.off("leaveRoom");
+    };
+  }, [list, receivedValue]);
+  function buttonClick(event: any) {
+    socket.emit("sendNumber", {
       number: Number(receivedValue),
       selectedNumber: Number(event.target.value),
     });
@@ -50,11 +61,38 @@ const Main = () => {
       {loginMessage && (
         <Box
           component="main"
+          aria-label="main"
           sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}
         >
           <Toolbar />
-          <Typography paragraph>{loginMessage}</Typography>
-          <Typography paragraph>{receivedValue}</Typography>
+          <Typography paragraph data-testid="message">
+            {loginMessage}
+          </Typography>
+          {list.length === 0 && (
+            <Typography paragraph>{receivedValue}</Typography>
+          )}
+          {list.map((value: string, index: number) => {
+            return index % 2 === 0 ? (
+              <Typography
+                width="200px"
+                ml={"300px"}
+                bgcolor={"#F8F5F2"}
+                key={value + index}
+              >
+                {value}
+              </Typography>
+            ) : (
+              <Typography
+                ml="auto"
+                mr="100px"
+                width="200px"
+                bgcolor={"#F8F5F2"}
+                key={value + index}
+              >
+                {value}
+              </Typography>
+            );
+          })}
 
           {gameOver && <Typography>Game Is Over! Well Played!!</Typography>}
           <Button value={-1} onClick={(e) => buttonClick(e)}>
@@ -73,4 +111,4 @@ const Main = () => {
   );
 };
 
-export default Main;
+export default React.memo(Main);

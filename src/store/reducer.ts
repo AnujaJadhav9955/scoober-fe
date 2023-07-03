@@ -6,13 +6,13 @@ export const initialState: UserState = {
   username: "", 
 }
 
+
 const reducer = (state = initialState, action: UserAction) => {
   switch (action.type) {
     case "Log_In":
       return {...state, loggedIn: action.loggedIn, username: action.username}
     case "Open_Dialog":
         return {...state, openDialog: action.openDialog}
-    
   }
 }
 

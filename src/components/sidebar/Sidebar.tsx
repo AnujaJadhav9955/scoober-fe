@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Drawer,
   Toolbar,
@@ -24,17 +24,20 @@ const Sidebar = () => {
     state?.username,
   ]);
 
-  console.log(loggedIn, username);
-  function enterInGame(room: string) {
-    console.log("ROMM", room);
+  const [selectedIndex, setSelectedIndex] = useState<null | number>(null);
+
+  function enterInGame(room: string, index: number) {
     if (!loggedIn) {
-      dispatch(openDialog(true));
+      alert("PLEASE LOGIN");
+      setSelectedIndex(null);
+    } else {
+      socket.emit("joinRoom", {
+        username: username,
+        room: room,
+        roomType: room.includes("CPU") ? "cpu" : "human",
+      });
+      setSelectedIndex(index);
     }
-    socket.emit("joinRoom", {
-      username: username,
-      room: room,
-      roomType: room.includes("CPU") ? "cpu" : "human",
-    });
   }
 
   return (
@@ -51,8 +54,11 @@ const Sidebar = () => {
       <Box sx={{ overflow: "auto" }}>
         <List>
           {["Berlin CPU", "Amsterdam CPU", "Sabrican"].map((text, index) => (
-            <ListItem key={text}>
-              <ListItemButton onClick={() => enterInGame(text)}>
+            <ListItem key={text} sx={{ height: "80px" }}>
+              <ListItemButton
+                onClick={() => enterInGame(text, index)}
+                selected={selectedIndex == index}
+              >
                 <ListItemText primary={text} />
                 <ListItemIcon>
                   <ArrowForwardIosIcon />
@@ -67,4 +73,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default React.memo(Sidebar);

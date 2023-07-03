@@ -35,6 +35,7 @@ const LoginDialog = (props: OpenDialog) => {
     <Dialog
       fullWidth
       open={props.openDialog}
+      data-testid="login-dialog"
       onClose={() => dispatch(openDialog(false))}
     >
       <DialogTitle>Login</DialogTitle>
@@ -53,10 +54,12 @@ const LoginDialog = (props: OpenDialog) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={() => dispatch(openDialog(false))}>Cancel</Button>
-        <Button onClick={() => login()}>Login</Button>
+        <Button data-testid="login" onClick={() => login()}>
+          Login
+        </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default LoginDialog;
+export default React.memo(LoginDialog);
